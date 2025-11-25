@@ -9,7 +9,6 @@ import org.mapstruct.factory.Mappers;
 public interface NewsConvert {
     NewsConvert INSTANCE = Mappers.getMapper(NewsConvert.class);
 
-
     NewsVO convert(News news);
 
 }

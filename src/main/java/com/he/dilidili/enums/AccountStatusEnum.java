@@ -1,4 +1,4 @@
-package fun.ychen.share.app.enums;
+package com.he.dilidili.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

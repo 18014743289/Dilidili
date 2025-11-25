@@ -12,4 +12,7 @@ public interface LayoutConvert {
 
     Layout convert(LayoutDTO dto);
 
+    LayoutVO convert(Layout layout);
+
+    LayoutVO convertToVO(LayoutDTO layoutDTO);
 }

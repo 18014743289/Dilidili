@@ -18,18 +18,12 @@ public class RelationshipVO {
     @Schema(description = "粉丝ID")
     private Integer fan;
 
-    @Schema(description = "跟随者昵称")
-    private String followNickName;
+    @Schema(description = "昵称")
+    private String nickName;
 
-    @Schema(description = "跟随者头像")
-    private String followAvatar;
-
-    @Schema(description = "粉丝昵称")
-    private String fanNickName;
-
-    @Schema(description = "粉丝头像")
-    private String fanAvatar;
+    @Schema(description = "头像")
+    private String avatar;
 
     @Schema(description = "关系创建时间")
-    private LocalDateTime create_time;
+    private LocalDateTime createTime;
 }

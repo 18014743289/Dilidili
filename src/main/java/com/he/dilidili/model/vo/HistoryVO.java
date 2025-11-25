@@ -12,11 +12,20 @@ public class HistoryVO {
     @Schema(description = "主键ID")
     private Integer id;
 
-    @Schema(description = "关联产品ID")
+    @Schema(description = "关联作品")
     private Integer product;
 
-    @Schema(description = "访问者ID")
-    private Integer visitor;
+    @Schema(description = "观看时间")
+    private Double last;
+
+    @Schema(description = "作品名称")
+    private String name; // 作品名称
+
+    @Schema(description = "作品作者")
+    private Integer author; // 作品作者
+
+    @Schema(description = "作品作者昵称")
+    private String nickName; // 作品作者昵称
 
     @Schema(description = "记录创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

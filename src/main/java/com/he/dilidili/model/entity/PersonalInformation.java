@@ -18,7 +18,7 @@ public class PersonalInformation {
 
     private String phone;            // Phone number (unique)
 
-    private String nick_name;        // Nickname
+    private String nickName;        // Nickname
 
     private String password;         // Password
 
@@ -40,13 +40,13 @@ public class PersonalInformation {
 
     private Integer role;            // Role: 0 for user, 1 for admin
 
-    private Integer rank;            // User rank
+    private Integer lv;            // User rank
 
-    private LocalDateTime last_login;// Last login timestamp
+    private LocalDateTime lastLogin;// Last login timestamp
 
     private String hobby;            // Hobby
 
     private String stunt;            // Stunt/Signature
 
-    private LocalDateTime create_time; // Account creation time
+    private LocalDateTime createTime; // Account creation time
 }

@@ -14,5 +14,6 @@ public interface PersonalInformationConvert {
 
     PersonalInformationVO convert(PersonalInformation personalInformation);
 
+
     PersonalInformationVO convertTOVO(PersonalInformationDTO personalInformationDTO);
 }

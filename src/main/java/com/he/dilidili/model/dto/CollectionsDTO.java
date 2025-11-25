@@ -4,12 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "新增收藏关联信息")
+@Schema(description = "新增收藏")
 public class CollectionsDTO {
 
-    @Schema(description = "收藏ID")
+    @Schema(description = "收藏夹")
     private Integer collection;
 
-    @Schema(description = "产品ID")
+    @Schema(description = "作品")
     private Integer product;
 }

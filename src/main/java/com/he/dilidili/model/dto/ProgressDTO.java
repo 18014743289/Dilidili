@@ -7,6 +7,9 @@ import lombok.Data;
 @Schema(description = "进度信息DTO")
 public class ProgressDTO {
 
+    @Schema(description = "主键ID")
+    private Integer id;
+
     @Schema(description = "接收者ID")
     private Integer receiver;
 
@@ -17,5 +20,5 @@ public class ProgressDTO {
     private Integer status;
 
     @Schema(description = "进度描述")
-    private String description;
+    private String progress;
 }

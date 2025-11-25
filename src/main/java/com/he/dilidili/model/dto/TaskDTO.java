@@ -7,6 +7,9 @@ import lombok.Data;
 @Schema(description = "任务信息DTO")
 public class TaskDTO {
 
+    @Schema(description = "主键ID")
+    private Integer id;
+
     @Schema(description = "任务名称")
     private String name;
 
@@ -19,6 +22,4 @@ public class TaskDTO {
     @Schema(description = "任务奖励")
     private String award;
 
-    @Schema(description = "任务状态：0为未完成，1为已完成")
-    private Integer end;
 }

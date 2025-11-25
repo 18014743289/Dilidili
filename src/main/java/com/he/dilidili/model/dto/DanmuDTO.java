@@ -7,10 +7,10 @@ import lombok.Data;
 @Schema(description = "新建弹幕信息")
 public class DanmuDTO {
 
-    @Schema(description = "作品ID", example = "1")
+    @Schema(description = "作品")
     private Integer product;
 
-    @Schema(description = "弹幕内容", example = "哈哈哈，太好笑了！")
+    @Schema(description = "弹幕内容")
     private String content;
 
     @Schema(description = "弹幕出现时间（单位：秒）", example = "12.5")
@@ -19,6 +19,6 @@ public class DanmuDTO {
     @Schema(description = "弹幕字体大小", example = "16px")
     private String size;
 
-    @Schema(description = "弹幕颜色", example = "white")
+    @Schema(description = "弹幕颜色", example = " #FFFFFF")
     private String color;
 }

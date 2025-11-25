@@ -1,4 +1,4 @@
-package fun.ychen.share.app.common.result;
+package com.he.dilidili.common.result;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -24,7 +24,7 @@ public class PageResult<T> implements Serializable {
      * @param list 列表数据
      * @param total 总记录数
      */
-    public PageResult(List<T> list,long total) {
+    public PageResult(List<T> list, long total) {
         this.list = list;
         this.total = (int) total;
     }

@@ -9,8 +9,5 @@ import org.mapstruct.factory.Mappers;
 public interface HistoryConvert {
     HistoryConvert INSTANCE = Mappers.getMapper(HistoryConvert.class);
 
-
     HistoryVO convert(History history);
-
-    HistoryVO convertTOVO(History dto);
 }

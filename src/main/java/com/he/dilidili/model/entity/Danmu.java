@@ -14,11 +14,17 @@ public class Danmu {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    private Integer sender;
+
     private String content;
 
     private Integer product;
 
-    private LocalDateTime time;
+    private String size;
 
-    private LocalDateTime create_time;
+    private String color;
+
+    private Double time;
+
+    private LocalDateTime createTime;
 }

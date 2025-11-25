@@ -1,8 +1,9 @@
-package com.hahaha.musicshare.convert;
+package com.he.dilidili.convert;
 
-import com.hahaha.musicshare.model.dto.CommentDTO;
-import com.hahaha.musicshare.model.entity.Comment;
-import com.hahaha.musicshare.model.vo.CommentVO;
+
+import com.he.dilidili.model.dto.CommentDTO;
+import com.he.dilidili.model.entity.Comment;
+import com.he.dilidili.model.vo.CommentVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

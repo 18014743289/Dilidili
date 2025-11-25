@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @TableName("chat")
 public class Chat {
@@ -18,5 +20,5 @@ public class Chat {
 
     private String content;
 
-    private String creat_time; // 使用 String 类型保存日期时间格式，必要时可改为 LocalDateTime
+    private LocalDateTime creatTime; // 使用 String 类型保存日期时间格式，必要时可改为 LocalDateTime
 }

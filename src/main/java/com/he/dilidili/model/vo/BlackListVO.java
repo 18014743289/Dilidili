@@ -29,5 +29,5 @@ public class BlackListVO {
 
     @Schema(description = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private LocalDateTime create_time;
+    private LocalDateTime createTime;
 }

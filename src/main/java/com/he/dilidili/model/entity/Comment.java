@@ -22,7 +22,9 @@ public class Comment {
 
     private Integer attach;
 
-    private String aim;
+    private Integer like;
 
-    private LocalDateTime create_time;
+    private String at;
+
+    private LocalDateTime createTime;
 }

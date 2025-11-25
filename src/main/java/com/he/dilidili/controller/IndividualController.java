@@ -3,11 +3,13 @@ package com.he.dilidili.controller;
 
 import com.he.dilidili.common.cache.RequestContext;
 import com.he.dilidili.common.result.Result;
-import com.he.dilidili.model.dto.CollectionsDTO;
-import com.he.dilidili.model.dto.PersonalInformationDTO;
-import com.he.dilidili.model.entity.*;
-import com.he.dilidili.model.vo.*;
+import com.he.dilidili.model.dto.*;
+import com.he.dilidili.model.vo.CollectVO;
+import com.he.dilidili.model.vo.LayoutVO;
+import com.he.dilidili.model.vo.PersonalInformationVO;
+import com.he.dilidili.model.vo.ProgressVO;
 import com.he.dilidili.service.*;
+import com.he.dilidili.utils.AIAssistantUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -15,39 +17,68 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/individual")
 @AllArgsConstructor
-@Tag(name = "⽤户接⼝")
-public class UserController {
-    private final PersonalInformationService userService;
+@Tag(name = "个体运营")
+public class IndividualController {
+    private final PersonalInformationService personalInformationService;
     private final CommunicationService communicationService;
     private final CommentService commentService;
-    private final RelationshipService fanService;
-    private final NewsService notificationService;
-    private final CollectionsService favoritesService;
+    private final RelationshipService relationshipService;
+    private final NewsService newsService;
+    private final CollectionsService collectionsService;
     private final ProductsService musicService;
+    private final ApplicationService applicationService;
+    private final LikeService likeService;
+    private final CollectService collectService;
+    private final HistoryService historyService;
+    private final LayoutService layoutService;
+    private final ProgressService progressService;
 
-    @RequestMapping(value = "/info", method = {RequestMethod.POST, RequestMethod.GET})
+    @RequestMapping(value = "/RandomName", method = {RequestMethod.POST})
+    @Operation(summary = "获取随机用户名")
+    public Result<String> getRandomName(){
+        return Result.ok(AIAssistantUtils.createName());
+    }
+    @RequestMapping(value = "/application", method = {RequestMethod.POST})
+    @Operation(summary = "申请身份认证")
+    public Result<String> application(@RequestBody ApplicationDTO applicationDTO){
+        applicationService.insert(applicationDTO);
+        return Result.ok();
+    }
+    @RequestMapping(value = "/changePhone", method = {RequestMethod.PUT})
+    @Operation(summary = "换绑手机号")
+    public Result<String> bindPhone(
+            @RequestParam("phone") String phone,
+            @RequestParam("code") String code,
+            @RequestHeader("Authorization") String accessToken)
+    {
+        return Result.ok(communicationService.bindPhone(phone, code, accessToken));
+    }
+
+    @RequestMapping(value = "/info", method = {RequestMethod.GET})
     @Operation(summary = "获取⽤户信息")
     public Result<PersonalInformationVO> getInfo() {
-        return Result.ok(userService.getPersonalInformation(RequestContext.getUserId()));
+        return Result.ok(personalInformationService.getPersonalInformation(RequestContext.getUserId()));
     }
 
-    @RequestMapping(value = "/update", method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
     @Operation(summary = "修改⽤户信息")
     public Result<PersonalInformationVO> update(@RequestBody PersonalInformationDTO userEditDTO) {
-        return Result.ok(userService.updatePersonalInformation(userEditDTO));
+        return Result.ok(personalInformationService.updatePersonalInformation(userEditDTO));
     }
 
-    @RequestMapping(value = "/upload/avatar", method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(value = "/avatar", method = {RequestMethod.POST})
     @Operation(summary = "头像上传")
     public Result<String> upload(@RequestBody MultipartFile file) {
         return Result.ok(communicationService.uploadAvatar(file));
     }
 
-    @RequestMapping(value = "/changePassword", method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(value = "/changePassword", method = {RequestMethod.PUT})
     @Operation(summary = "更改密码")
     public Result<String> changePassword(@RequestParam("phone") String phone, @RequestParam("code") String code,
                                          @RequestParam("password") String password, @RequestHeader("Authorization") String accessToken) {
@@ -63,76 +94,121 @@ public class UserController {
 //    @RequestMapping(value = "/Fan", method = {RequestMethod.POST, RequestMethod.GET})
 //    @Operation(summary = "获取粉丝")
 //    public Result<List<RelationshipVO>> getFan() {
-//        return Result.ok(fanService.getFans());
+//        return Result.ok(relationshipService.getFans());
 //    }
 
 //    @RequestMapping(value = "/Followed", method = {RequestMethod.POST, RequestMethod.GET})
 //    @Operation(summary = "获取关注")
 //    public Result<List<RelationshipVO>> getFollowed() {
-//        return Result.ok(fanService.getFollows());
+//        return Result.ok(relationshipService.getFollows());
 //    }
 
-    @RequestMapping(value = "/AddFan", method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(value = "/AddFan", method = {RequestMethod.POST})
     @Operation(summary = "添加粉丝信息")
     public Result<String> addFan(@RequestParam Integer id) {
-        fanService.addRelationship(id);
-//        Todo"您有新的粉丝!"
-        notificationService.addNews(new News());
+        relationshipService.addRelationship(id);
+        newsService.addNews(id, 2,"您有新的粉丝!");
         return Result.ok();
     }
 
-    @RequestMapping(value = "/DeleteFan", method = {RequestMethod.DELETE, RequestMethod.POST})
+    @RequestMapping(value = "/DeleteFan", method = {RequestMethod.DELETE})
     @Operation(summary = "删除粉丝信息")
     public Result<String> deleteFan(@RequestParam("id") Integer id) {
-        fanService.deleteRelationship(id);
+        relationshipService.deleteRelationship(id);
         return Result.ok();
     }
 
 //    @RequestMapping(value = "/GetNotification", method = {RequestMethod.GET, RequestMethod.POST})
 //    @Operation(summary = "获取通知")
 //    public Result<List<NewsVO>> getNotification() {
-//        return Result.ok(notificationService.getNewsByType());
+//        return Result.ok(newsService.getNewsByType());
 //    }
 
-    @RequestMapping(value = "/DeleteNotification", method = {RequestMethod.DELETE, RequestMethod.POST})
+    @RequestMapping(value = "/DeleteNotification", method = {RequestMethod.DELETE})
     @Operation(summary = "删除通知")
     public Result<String> deleteNotification(@RequestParam("id") Integer id) {
-        notificationService.deleteNews(id);
+        newsService.deleteNews(id);
         return Result.ok();
     }
 
 //    @RequestMapping(value = "/Favorites", method = {RequestMethod.GET, RequestMethod.POST})
 //    @Operation(summary = "获取收藏")
 //    public Result<List<FavoritesVO>> getFavorites() {
-//        return Result.ok(favoritesService.getFavorites());
+//        return Result.ok(collectionsService.getFavorites());
 //    }
 
-    @RequestMapping(value = "/AddFavorites", method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(value = "/AddFavorites", method = {RequestMethod.POST})
     @Operation(summary = "添加收藏")
     public Result<String> addFavorites(@RequestBody CollectionsDTO collectionsDTO) {
-        favoritesService.addCollections(collectionsDTO);
+        collectionsService.addCollections(collectionsDTO);
         return Result.ok();
     }
 
-    @RequestMapping(value = "/DeleteFavorites", method = {RequestMethod.DELETE, RequestMethod.POST})
+    @RequestMapping(value = "/DeleteFavorites", method = {RequestMethod.DELETE})
     @Operation(summary = "删除收藏")
     public Result<String> deleteFavorites(@RequestParam("id") Integer id) {
-        favoritesService.removeById(id);
+        collectionsService.cancelCollections(id);
         return Result.ok();
     }
 
-//    @RequestMapping(value = "/GetHostMusic", method = {RequestMethod.GET, RequestMethod.POST})
-//    @Operation(summary = "获取热门音乐")
-//    public Result<List<ProductsVO>> getHostMusic(@RequestParam("number") Integer num) {
-//        return Result.ok(musicService.getHostMusic(num));
-//    }
+//    TODO 获取收藏夹内容
+//    TODO 获取浏览记录
+//    TODO 获取激励任务 查询任务进度 更新任务进度
 
-//    @RequestMapping(value = "/GetLatestMusic", method = {RequestMethod.GET, RequestMethod.POST})
-//    @Operation(summary = "获取最新作品")
-//    public Result<List<MusicVO>> getLatestMusic() {
-//        return Result.ok(musicService.getLatestMusic());
-//    }
-//
+    @RequestMapping(value = "/AddCollect", method = {RequestMethod.POST})
+    @Operation(summary = "新建收藏夹")
+    public Result<String> addCollect(@RequestBody CollectDTO collectDTO) {
+        collectService.add(collectDTO);
+        return Result.ok();
+    }
+
+    @RequestMapping(value = "/UpdateCollect", method = {RequestMethod.PUT})
+    @Operation(summary = "更新收藏夹信息")
+    public Result<String> updateCollect(@RequestBody CollectDTO collectDTO) {
+        collectService.update(collectDTO);
+        return Result.ok();
+    }
+
+    @RequestMapping(value = "/DeleteCollect", method = {RequestMethod.DELETE})
+    @Operation(summary = "删除收藏夹")
+    public Result<String> deleteCollect(@RequestParam("id") Integer id) {
+        historyService.deleteHistory(id);
+        return Result.ok();
+    }
+
+    @RequestMapping(value = "/DeleteHistory", method = {RequestMethod.DELETE})
+    @Operation(summary = "删除历史记录")
+    public Result<String> deleteHistory(@RequestParam("id") Integer id) {
+        collectService.delete(id);
+        return Result.ok();
+    }
+
+    @RequestMapping(value = "/UpdateLayout", method = {RequestMethod.PUT})
+    @Operation(summary = "更新布局")
+    public Result<String> updateLayout(@RequestBody LayoutDTO layoutDTO) {
+        layoutService.updateLayout(layoutDTO);
+        return Result.ok();
+    }
+
+    @RequestMapping(value = "/GetLayout", method = {RequestMethod.GET})
+    @Operation(summary = "获取布局")
+    public Result<LayoutVO> getLayout(@RequestParam ("id") Integer id) {
+        return Result.ok( layoutService.getLayout(id));
+    }
+
+    @RequestMapping(value = "/ReceiveTask", method = {RequestMethod.POST})
+    @Operation(summary = "接受任务")
+    public Result<String> receiveTask(@RequestParam ("id") Integer id) {
+        progressService.addProgress(id);
+        return Result.ok();
+    }
+
+    @RequestMapping(value = "/UpdateTask", method = {RequestMethod.PUT})
+    @Operation(summary = "更新任务进度")
+    public Result<ProgressVO> updateProgress(@RequestParam ("id") Integer id) {
+//        TODO
+        return Result.ok(progressService.updateProgress(id));
+    }
 //    @RequestMapping(value = "/GetMyWorks", method = {RequestMethod.GET, RequestMethod.POST})
 //    @Operation(summary = "获取个人作品")
 //    public Result<List<MusicVO>> getMyWorks() {
@@ -144,69 +220,60 @@ public class UserController {
 //    public Result<List<MusicVO>> SearchMusic(@RequestParam("keyword") String keyword) {
 //        return Result.ok(musicService.getMusicByKeyword(keyword));
 //    }
-//
-//    @RequestMapping(value = "/UpdateMusic", method = {RequestMethod.PUT, RequestMethod.POST})
-//    @Operation(summary = "更新作品状态")
-//    public Result<String> updateMusic(@RequestParam("music_id") Integer music_id, @RequestParam("status") String status) {
-//        musicService.updateMusicStatus(music_id, status);
-//        return Result.ok();
-//    }
-//
-//    @RequestMapping(value = "/UploadMusic", method = {RequestMethod.POST, RequestMethod.PUT})
-//    @Operation(summary = "上传作品")
-//    public Result<String> uploadMusic(@RequestBody MultipartFile cover, @RequestBody MultipartFile music,
-//                                      @RequestParam("name") String name, @RequestParam("description") String description,
-//                                      @RequestParam("keywords") String keywords) {
-//        musicService.shareMusic(cover, music, name, description, keywords);
-//        return Result.ok();
-//    }
-//
-//    @RequestMapping(value = "/Click", method = {RequestMethod.GET, RequestMethod.POST})
-//    @Operation(summary = "作品被点击")
-//    public Result<String> clickMusic(@RequestParam("music_id") Integer music_id) {
-//        musicService.clickMusic(music_id);
-//        return Result.ok();
-//    }
-//
-//    @RequestMapping(value = "/AddComment", method = {RequestMethod.POST, RequestMethod.GET})
-//    @Operation(summary = "添加评论")
-//    public Result<String> addComment(@RequestBody CommentDTO commentDTO) {
-//        commentService.addComment(commentDTO);
-//        return Result.ok();
-//    }
-//
-//    @RequestMapping(value = "/DeleteComment", method = {RequestMethod.DELETE, RequestMethod.POST})
-//    @Operation(summary = "删除评论")
-//    public Result<String> deleteComment(@RequestParam("id") Integer id) {
-//        commentService.deleteComment(id);
-//        return Result.ok();
-//    }
-//
+
+    @RequestMapping(value = "/UpdateProduct", method = {RequestMethod.PUT})
+    @Operation(summary = "更新作品状态")
+    public Result<String> updateMusic(@RequestBody ProductsDTO productsDTO) {
+        musicService.updateProducts(productsDTO);
+        return Result.ok();
+    }
+
+    @RequestMapping(value = "/UploadProduct", method = {RequestMethod.POST})
+    @Operation(summary = "上传作品")
+    public Result<String> uploadMusic(@RequestBody ProductsDTO productsDTO) {
+        musicService.addProducts(productsDTO);
+        return Result.ok();
+    }
+
+    @RequestMapping(value = "/AddComment", method = {RequestMethod.POST})
+    @Operation(summary = "添加评论")
+    public Result<String> addComment(@RequestBody CommentDTO commentDTO) {
+        commentService.addComment(commentDTO);
+//        TODO 缺少为at条目对象遍历添加通知
+        return Result.ok();
+    }
+
+    @RequestMapping(value = "/DeleteComment", method = {RequestMethod.DELETE})
+    @Operation(summary = "删除评论")
+    public Result<String> deleteComment(@RequestParam("id") Integer id) {
+        commentService.deleteComment(id);
+        return Result.ok();
+    }
+
 //    @RequestMapping(value = "/MusicComment", method = {RequestMethod.GET, RequestMethod.POST})
 //    @Operation(summary = "获取作品评论")
 //    public Result<List<CommentVO>> SearchMusic(@RequestParam("id") Integer id) {
 //        return Result.ok(commentService.getCommentByMusicId(id));
 //    }
 //
-//    @RequestMapping(value = "/LikesComment", method = {RequestMethod.POST, RequestMethod.PUT})
-//    @Operation(summary = "点赞评论")
-//    public Result<String> likesComment(@RequestParam("id") Integer id) {
-//        commentService.likes(id);
-//        return Result.ok();
-//    }
-//
-//    @RequestMapping(value = "/DislikesComment", method = {RequestMethod.POST, RequestMethod.PUT})
-//    @Operation(summary = "取消点赞评论")
-//    public Result<String> dislikesComment(@RequestParam("id") Integer id) {
-//        commentService.dislikes(id);
-//        return Result.ok();
-//    }
-//
-//    @RequestMapping(value = "/IsFavorite", method = {RequestMethod.GET, RequestMethod.POST})
-//    @Operation(summary = "判断是否收藏")
-//    public Result<Boolean> isFavorite(@RequestParam("id") Integer id) {
-//        return Result.ok(favoritesService.isFavorite(id));
-//    }
+    @RequestMapping(value = "/LikesComment", method = {RequestMethod.POST})
+    @Operation(summary = "点赞评论")
+    public Result<Integer> likesComment(@RequestBody LikeDTO likeDTO) {
+        return Result.ok(likeService.addLike(likeDTO));
+    }
+
+    @RequestMapping(value = "/DislikesComment", method = {RequestMethod.POST})
+    @Operation(summary = "取消点赞评论")
+    public Result<String> dislikesComment(@RequestParam ("id") Integer id) {
+        likeService.deleteLike(id);
+        return Result.ok();
+    }
+
+    @RequestMapping(value = "/IsFavorite", method = {RequestMethod.GET})
+    @Operation(summary = "判断是否收藏")
+    public Result<List<CollectVO>> isFavorite(@RequestParam("id") Integer id) {
+        return Result.ok(collectionsService.isCollected(id));
+    }
 //
 //    @RequestMapping(value = "/GetFollowedWorks", method = {RequestMethod.GET, RequestMethod.POST})
 //    @Operation(summary = "获取关注作品")

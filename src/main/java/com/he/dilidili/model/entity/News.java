@@ -16,6 +16,8 @@ public class News {
 
     private Integer receiver;  // Foreign key to 'personal_information' table
 
+    private Integer man;
+
     private Integer type;      // Type of news: 0 for like, 1 for @, 2 for official
 
     private String content;    // Content of the news

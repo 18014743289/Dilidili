@@ -1,4 +1,4 @@
-package fun.ychen.share.app.model.vo;
+package com.he.dilidili.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,8 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @Schema(name = "PersonalInformationVO", description = "个人信息VO")
 public class PersonalInformationVO {
-
-    @Schema(description = "用户ID")
+    @Schema(description = "主键")
     private Integer id;
 
     @Schema(description = "手机号")
@@ -18,9 +17,6 @@ public class PersonalInformationVO {
 
     @Schema(description = "昵称")
     private String nickName;
-
-    @Schema(description = "密码（加密后显示）")
-    private String password;
 
     @Schema(description = "官方身份认证")
     private String position;
@@ -47,11 +43,11 @@ public class PersonalInformationVO {
     @Schema(description = "积分")
     private Integer credits;
 
-    @Schema(description = "角色（用户0，管理员1）")
-    private Integer role;
-
     @Schema(description = "等级")
-    private Integer rank;
+    private Integer lv;
+
+    @Schema(description = "角色（0：普通用户，1：管理员）")
+    private Integer role;
 
     @Schema(description = "上次登录时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -63,7 +59,10 @@ public class PersonalInformationVO {
     @Schema(description = "噱头")
     private String stunt;
 
-    @Schema(description = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private LocalDateTime createTime;
+    @Schema(description = "令牌")
+    private String accessToken;
+
+    @Schema(description = "是否为新用户")
+    private Boolean isNew;
+
 }

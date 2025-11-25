@@ -1,20 +1,21 @@
-package com.hahaha.musicshare.service;
+package com.he.dilidili.service;
+
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.hahaha.musicshare.model.entity.User;
-import com.hahaha.musicshare.model.vo.UserLoginVO;
+import com.he.dilidili.model.entity.PersonalInformation;
+import com.he.dilidili.model.vo.PersonalInformationVO;
 
-public interface AuthService extends IService<User> {
+public interface AuthService extends IService<PersonalInformation> {
 
     /**
      * 登录
      *
      * @param phone 电话
      * @param code  验证码
-     * @return {@link UserLoginVO}
+     * @return {@link PersonalInformationVO}
      */
 
-    UserLoginVO loginByCode(String phone, String code);
+    PersonalInformationVO loginByCode(String phone, String code);
 
 
      /**
@@ -22,10 +23,10 @@ public interface AuthService extends IService<User> {
      *
      * @param phone    电话
      * @param password 密码
-     * @return {@link UserLoginVO}
+     * @return {@link PersonalInformationVO}
      */
 
-    UserLoginVO loginByPassword(String phone,String password);
+     PersonalInformationVO loginByPassword(String phone,String password);
 
 
     /**

@@ -10,14 +10,14 @@ public class FeedbackVO {
     @Schema(description = "反馈ID")
     private Integer id;
 
-    @Schema(description = "提交人ID")
+    @Schema(description = "提交人")
     private Integer submitter;
 
     @Schema(description = "提交人昵称")
-    private String submitter_nick_name; // 提交人昵称
+    private String nickName; // 提交人昵称
 
     @Schema(description = "提交人头像")
-    private String submitter_avatar; // 提交人头像
+    private String avatar; // 提交人头像
 
     @Schema(description = "反馈内容")
     private String content;

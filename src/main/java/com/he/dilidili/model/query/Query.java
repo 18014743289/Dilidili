@@ -1,4 +1,4 @@
-package fun.ychen.share.app.model.query;
+package com.he.dilidili.model.query;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -18,4 +18,6 @@ public class Query {
     String order;
 
     boolean asc;
+
+    Integer code;
 }

@@ -1,29 +1,32 @@
 package com.he.dilidili.model.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-@Schema(name = "DanmuVO", description = "弹幕VO")
+@Schema(description = "弹幕信息返回对象")
 public class DanmuVO {
 
-    @Schema(description = "主键ID")
+    @Schema(description = "弹幕ID")
     private Integer id;
+
+    @Schema(description = "发送者ID")
+    private Integer sender;
 
     @Schema(description = "弹幕内容")
     private String content;
 
-    @Schema(description = "关联的产品ID")
-    private Integer product;
+    @Schema(description = "弹幕出现时间（单位：秒）", example = "12.5")
+    private Double time;
 
-    @Schema(description = "弹幕时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime time;
+    @Schema(description = "弹幕字体大小", example = "16px")
+    private String size;
 
-    @Schema(description = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Schema(description = "弹幕颜色")
+    private String color;
+
+    @Schema(description = "弹幕创建时间", example = "2025-02-06 16:59:16")
     private LocalDateTime createTime;
 }

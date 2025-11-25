@@ -1,15 +1,33 @@
 package com.he.dilidili.utils;
 
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 
-import com.google.gson.Gson;
-
-public class AIAssistant {
+public class AIAssistantUtils {
+    static String[] names = {
+            "风", // 自然现象（单字）
+            "石子", // 日常物品
+            "云", // 自然现象（单字）
+            "纸船",
+            "光", // 抽象概念（单字）
+            "木纹",
+            "溪", // 自然地理（单字）
+            "布褶",
+            "影", // 光影现象（单字）
+            "铃音",
+            "痕", // 抽象痕迹（单字）
+            "叶脉",
+            "声", // 感官元素（单字）
+            "台阶",
+            "隙" // 空间概念（单字）
+    };
 
     static class Message {
         String role;
@@ -31,14 +49,15 @@ public class AIAssistant {
         }
     }
 
-    public static String createName() {
+    // 获取取名风格
+    public static String getNamingStyle() {
         try {
             // 创建请求体
             RequestBody requestBody = new RequestBody(
                     "qwen-plus",
                     new Message[] {
                             new Message("system", "You are a helpful assistant."),
-                            new Message("user", "取一个用户名，加上随机数字，仅回复名字")
+                            new Message("user", "给我一个描述风格的词汇，和"+names[(int) (Math.random()* names.length)]+"有关")
                     }
             );
 
@@ -48,7 +67,51 @@ public class AIAssistant {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return "潇洒";  // 默认风格
+    }
+
+    // 创建名字，加载风格
+    public static String createName() {
+        try {
+            // 获取取名风格
+            String namingStyle = getNamingStyle();
+
+            // 创建请求体，使用获取的风格
+            RequestBody requestBody = new RequestBody(
+                    "qwen-plus",
+                    new Message[] {
+                            new Message("system", "You are a helpful assistant."),
+                            new Message("user", "简练回复，根据以下要求取名：和" + namingStyle + "有关，最终的名字有" + names[(int) (Math.random()* names.length)] + "字")
+                    }
+            );
+
+            String apiKey = "sk-d0de4f307b604dcbaba162070b01b1d0";
+            String result = sendRequest(requestBody, apiKey);
+            return trimName(result.substring(result.indexOf("content") + 10, result.indexOf("finish_reason") - 4));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "AAA";
+    }
+
+    public static String trimName(String strs) {
+        try {
+            // 创建请求体
+            RequestBody requestBody = new RequestBody(
+                    "qwen-plus",
+                    new Message[] {
+                            new Message("system", "You are a helpful assistant."),
+                            new Message("user", strs+"阅读本段文字，取出最恰当的名字美化后回复，只回复名字！")
+                    }
+            );
+
+            String apiKey = "sk-d0de4f307b604dcbaba162070b01b1d0";
+            String result = sendRequest(requestBody, apiKey);
+            return result.substring(result.indexOf("content") + 10, result.indexOf("finish_reason") - 4);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "开个玩笑，再来一次";  // 默认风格
     }
 
     private static String sendRequest(RequestBody requestBody, String apiKey) throws Exception {
@@ -93,6 +156,4 @@ public class AIAssistant {
             return result;
         }
     }
-
-
 }

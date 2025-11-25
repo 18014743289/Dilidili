@@ -16,10 +16,10 @@ public class ApplicationVO {
     private Integer applicant;
 
     @Schema(description = "申请人昵称")
-    private String applicant_nickname;
+    private String nickName;
 
     @Schema(description = "申请人头像")
-    private String applicant_avatar;
+    private String avatar;
 
     @Schema(description = "凭证")
     private String certificate;
@@ -32,5 +32,5 @@ public class ApplicationVO {
 
     @Schema(description = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private LocalDateTime create_time;
+    private LocalDateTime createTime;
 }

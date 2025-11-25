@@ -1,34 +1,39 @@
-package com.hahaha.musicshare.service.impl;
-
+package com.he.dilidili.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.hahaha.musicshare.common.cache.RedisCache;
-import com.hahaha.musicshare.common.cache.RedisKeys;
-import com.hahaha.musicshare.common.cache.RequestContext;
-import com.hahaha.musicshare.common.cache.TokenStoreCache;
-import com.hahaha.musicshare.common.exception.ErrorCode;
-import com.hahaha.musicshare.common.exception.ServerException;
-import com.hahaha.musicshare.mapper.UserMapper;
-import com.hahaha.musicshare.model.entity.User;
-import com.hahaha.musicshare.model.vo.UserLoginVO;
-import com.hahaha.musicshare.service.AuthService;
-import com.hahaha.musicshare.utils.JwtUtil;
+import com.he.dilidili.common.cache.RedisCache;
+import com.he.dilidili.common.cache.RedisKeys;
+import com.he.dilidili.common.cache.RequestContext;
+import com.he.dilidili.common.cache.TokenStoreCache;
+import com.he.dilidili.common.constant.Constant;
+import com.he.dilidili.common.exception.ErrorCode;
+import com.he.dilidili.common.exception.ServerException;
+import com.he.dilidili.convert.PersonalInformationConvert;
+import com.he.dilidili.mapper.PersonalInformationMapper;
+import com.he.dilidili.model.entity.PersonalInformation;
+import com.he.dilidili.model.vo.PersonalInformationVO;
+import com.he.dilidili.service.AuthService;
+import com.he.dilidili.utils.AIAssistantUtils;
+import com.he.dilidili.utils.JwtUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 
 @Slf4j
 @Service
 @AllArgsConstructor
-public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements AuthService {
+public class AuthServiceImpl extends ServiceImpl<PersonalInformationMapper, PersonalInformation> implements AuthService {
     private final RedisCache redisCache;
     private final TokenStoreCache tokenStoreCache;
 
 
     @Override
-    public UserLoginVO loginByCode(String phone, String code) {
+    public PersonalInformationVO loginByCode(String phone, String code) {
+        boolean isNew = false;
         // 获取验证码cacheKey
         String smsCacheKey = RedisKeys.getSmsKey(phone);
         // 从redis中获取验证码
@@ -41,36 +46,45 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
         // 删除⽤过的验证码
         redisCache.delete(smsCacheKey);
         // 根据⼿机号获取⽤户
-        User user = baseMapper.getByPhone(phone);
+        PersonalInformation user = baseMapper.getByPhone(phone);
         // 判断⽤户是否注册过，如果user为空代表未注册，进⾏注册。否则开启登录流程
         if (ObjectUtils.isEmpty(user)) {
+            isNew = true;
             log.info("⽤户不存在，创建⽤户, phone: {}", phone);
-            user = new User();
-            user.setNickname(phone);
+            user = new PersonalInformation();
+//            调用千问大模型，生成随机用户名
+            user.setNickName(AIAssistantUtils.createName());
             user.setPhone(phone);
-            user.setRemark("user");
+            // 获取当前时间
+            LocalDateTime now = LocalDateTime.now();
+            user.setCreateTime(now);
+            user.setLastLogin(now);
             baseMapper.insert(user);
+            user=baseMapper.getByPhone(phone);
         }
-        return getUserLoginVO(user);
+        PersonalInformationVO res = getUserLoginVO(user);
+        res.setIsNew(isNew);
+        return res;
     }
 
-    private UserLoginVO getUserLoginVO(User user) {
+    private PersonalInformationVO getUserLoginVO(PersonalInformation user) {
         // 构造token
         String accessToken = JwtUtil.createToken(user.getId());
         // 构造登陆返回vo
-        UserLoginVO userLoginVO = new UserLoginVO();
-        userLoginVO.setId(user.getId());
-        userLoginVO.setPhone(user.getPhone());
-        userLoginVO.setAccessToken(accessToken);
-        userLoginVO.setRemark(user.getRemark());
-        tokenStoreCache.saveUser(accessToken, userLoginVO);
-        return userLoginVO;
+        PersonalInformationVO personalInformationVO = PersonalInformationConvert.INSTANCE.convert(user);
+        personalInformationVO.setAccessToken(accessToken);
+        tokenStoreCache.saveUser(accessToken,user);
+        // 保存⽤户id到上下⽂
+        RequestContext.put(Constant.USER_ID, user.getId());
+//        保存角色信息到上下文
+        RequestContext.put(Constant.USER_ROLE, user.getRole());
+        return personalInformationVO;
     }
 
     @Override
-    public UserLoginVO loginByPassword(String phone, String password) {
+    public PersonalInformationVO loginByPassword(String phone, String password) {
         // 根据⼿机号获取⽤户
-        User user = baseMapper.getByPhone(phone);
+        PersonalInformation user = baseMapper.getByPhone(phone);
         // 判断⽤户是否存在
         if (ObjectUtils.isEmpty(user)) {
             throw new ServerException(ErrorCode.USER_NOT_EXIST);

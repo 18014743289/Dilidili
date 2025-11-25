@@ -19,4 +19,6 @@ public class Progress {
     private Integer task;      // Foreign key to 'task' table
 
     private Integer status;    // Status: 0 for not completed, 1 for completed
+
+    private String progress; // Description of the progress
 }

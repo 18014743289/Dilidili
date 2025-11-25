@@ -3,14 +3,14 @@ server:
   port: 8083
   servlet:
     # ???????
-    context-path: /music-share
+    context-path: /dilidili
 
 spring:
   main:
     allow-bean-definition-overriding: true
   application:
     # ????
-    name: music-share
+    name: dilidili
   profiles:
     # ????
     active: dev
@@ -19,30 +19,27 @@ spring:
       matching-strategy: ant_path_matcher
   servlet:
     multipart:
-      max-file-size: 100MB # 单个上传⽂件⼤⼩限定为100M
-      max-request-size: 1000MB # 单次上传⽂件⼤⼩限定为1000M
+      max-file-size: 10000MB # 单个上传⽂件⼤⼩限定
+      max-request-size: 100000MB # 单次上传⽂件⼤⼩限定
 
 # ?????????
 mybatis-plus:
   mapper-locations: classpath*:mapper/**/*.xml # 适配 XML 映射文件
-  type-aliases-package: com.hahaha.musicshare.model.entity # 扫描实体类包
+  type-aliases-package: com.he.dilidili.model.entity # 扫描实体类包
   configuration:
     # ???????
-    map-underscore-to-camel-case: true
+    map-underscore-to-camel-case: false
     cache-enabled: false
     # ????
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
-      # ??????
-      logic-delete-field: true
-      logic-delete-value: 1
-      logic-not-delete-value: 0
+      refresh-mapper: true  # 启用 Mapper 自动刷新
 
 # ????????
 logging:
   # ??????
-  config: target/classes/log/ logback-spring.xml
+  config: classpath:log/logback-spring.xml
 
 # springdoc-openapi
 springdoc:
@@ -56,7 +53,7 @@ springdoc:
     - group: 'default'
       paths-to-match: '/**'
       # ?? controller ?????????
-      packages-to-scan: com.hahaha.musicshare.controller
+      packages-to-scan: com.he.dilidili.controller
 
 # knife4j
 knife4j:
@@ -70,12 +67,10 @@ knife4j:
 
 auth:
   login_urls:
-    - /auth/logout
-    - /user/**
-    - /communication/changePhone
-    - /manager/**
+    - /auth/out
+    - /individual/*
   valid_urls:
-    - /manager/**
+    - /a
 
 
 # ??? OSS ????????
@@ -89,6 +84,13 @@ aliyun:
     accessKeySecret: nbhMbEIpBBmC9vzUTZWUQRAbiiOdu5
     # oss??????
     bucketName: xiaohexiansheng
+# 添加以下阿里云短信服务配置
+  sms:
+    accessKeyId: LTAI5tQ264G7BjAej4z1Ht2A
+    accessKeySecret: nbhMbEIpBBmC9vzUTZWUQRAbiiOdu5
+    regionId: ap-southeast-1
+    signName: 资源分享平台
+    templateCode: SMS_154950909
 
 # ?????????????? AccessKey ID
 #

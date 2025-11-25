@@ -16,7 +16,7 @@ public class Task {
 
     private String name;        // Task name
 
-    private Integer type;       // Task type: 0 for quantity, 1 for quality, 2 for both
+    private String description;
 
     private String award;       // Award associated with the task
 

@@ -20,5 +20,7 @@ public class History {
 
     private Integer visitor;  // FK to 'personal_information' table
 
-    private LocalDateTime create_time;  // Timestamp of history record creation
+    private Double last;
+
+    private LocalDateTime createTime;  // Timestamp of history record creation
 }
